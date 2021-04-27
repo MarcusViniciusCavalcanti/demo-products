@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,8 +19,22 @@ public class RestExceptionHandler {
     @ExceptionHandler(IllegalRequestBodyException.class)
     public ResponseEntity<ResponseError> handleIllegalRequestBodyException(
         IllegalRequestBodyException exception, HttpServletRequest request) {
-        return buildResponseErrorBy(
+        return buildBadRequest(
             new ValidationErrors(exception.errors()).getErrorMessage(),
+            exception,
+            request
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseError> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException exception, HttpServletRequest request) {
+        return buildBadRequest("Request body is invalid", exception, request);
+    }
+
+    private ResponseEntity<ResponseError> buildBadRequest(String msg, Exception exception, HttpServletRequest request) {
+        return buildResponseErrorBy(
+            "Request body is invalid",
             request,
             exception,
             HttpStatus.BAD_REQUEST
