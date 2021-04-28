@@ -3,12 +3,9 @@ package com.exemple.products.demo.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.exemple.products.demo.rest.exception.IllegalRequestBodyException;
 import com.exemple.products.demo.rest.handler.RestExceptionHandler;
-import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,8 +14,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,20 +23,12 @@ class RestExceptionHandlerTest {
     @Mock
     private HttpServletRequest httpServletRequest;
 
-    @Mock
-    private BindingResult bindingResult;
-
     @Test
     @DisplayName("Must return a ResponseEntity object with status code 400")
     void shouldReturnBadRequestBodyIsInvalid() {
-        var errors =
-            List.of(new FieldError("Object test 1", "Field Test 1", "Default Message Test 1"));
         when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer());
-        when(bindingResult.hasErrors()).thenReturn(Boolean.TRUE);
-        when(bindingResult.getFieldErrors()).thenReturn(errors);
 
         var exception = Mockito.mock(MethodArgumentNotValidException.class);
-        when(exception.getMessage()).thenReturn("Request body is invalid");
 
         var handler = new RestExceptionHandler();
         var response = handler.handleIllegalRequestBodyException(exception, httpServletRequest);
