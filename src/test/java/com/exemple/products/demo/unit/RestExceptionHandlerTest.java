@@ -3,6 +3,7 @@ package com.exemple.products.demo.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import com.exemple.products.demo.domain.product.exception.ProductNameException;
 import com.exemple.products.demo.rest.handler.RestExceptionHandler;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,5 +68,20 @@ class RestExceptionHandlerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals(HttpStatus.NOT_FOUND.value(), error.getStatusCode());
         assertEquals("Error", error.getMessage());
+    }
+
+    @Test
+    @DisplayName("Must return a ResponseEntity object with status code 400 when ProductNameException")
+    void shouldReturnProductNameException() {
+        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer());
+
+        var handler = new RestExceptionHandler();
+        var exception = new ProductNameException("Error");
+        var response = handler.handleProductNameException(exception, httpServletRequest);
+
+        var error = response.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), error.getStatusCode());
+        assertEquals("Name product is exist other Product", error.getMessage());
     }
 }

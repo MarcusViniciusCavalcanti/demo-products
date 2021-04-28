@@ -1,9 +1,9 @@
 package com.exemple.products.demo.rest.handler;
 
+import com.exemple.products.demo.domain.product.exception.ProductNameException;
 import com.exemple.products.demo.rest.errors.ResponseError;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +28,24 @@ public class RestExceptionHandler {
         return buildBadRequest(exception, request);
     }
 
+    @ExceptionHandler(ProductNameException.class)
+    public ResponseEntity<ResponseError> handleProductNameException(ProductNameException exception,
+        HttpServletRequest request) {
+        return buildResponseErrorBy(
+            "Name product is exist other Product",
+            request,
+            exception,
+            HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ResponseError> handlerEntityNotFoundException(
         EntityNotFoundException exception,
         HttpServletRequest request) {
-        return buildResponseErrorBy(exception.getMessage(), request, exception, HttpStatus.NOT_FOUND);
+        log.error(
+            String.format("Error in process request: %s cause by: %s", request.getRequestURL(),
+                exception.getClass().getSimpleName()));
+        return ResponseEntity.notFound().build();
     }
 
     private ResponseEntity<ResponseError> buildBadRequest(Exception exception,
