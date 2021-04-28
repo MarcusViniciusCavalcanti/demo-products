@@ -1,4 +1,4 @@
-package com.exemple.products.demo.rest.inputs;
+package com.exemple.products.demo.structure.dto.inputs;
 
 import java.math.BigDecimal;
 import javax.validation.constraints.NotBlank;

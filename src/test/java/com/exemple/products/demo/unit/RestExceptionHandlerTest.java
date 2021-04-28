@@ -8,6 +8,7 @@ import com.exemple.products.demo.rest.handler.RestExceptionHandler;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Unit - Test RestExceptionHandler")
@@ -38,14 +40,16 @@ class RestExceptionHandlerTest {
         when(bindingResult.hasErrors()).thenReturn(Boolean.TRUE);
         when(bindingResult.getFieldErrors()).thenReturn(errors);
 
+        var exception = Mockito.mock(MethodArgumentNotValidException.class);
+        when(exception.getMessage()).thenReturn("Request body is invalid");
+
         var handler = new RestExceptionHandler();
-        var exception = new IllegalRequestBodyException("Error", bindingResult);
         var response = handler.handleIllegalRequestBodyException(exception, httpServletRequest);
 
         var error = response.getBody();
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(HttpStatus.BAD_REQUEST.value(), error.getStatusCode());
-        assertEquals("[Field Test 1=Default Message Test 1]", error.getMessage());
+        assertEquals("Request body is invalid", error.getMessage());
     }
 
     @Test

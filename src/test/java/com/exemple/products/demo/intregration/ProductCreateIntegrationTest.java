@@ -32,7 +32,7 @@ public class ProductCreateIntegrationTest extends IntegrationAbstractTest {
             .assertThat()
             .statusCode(BAD_REQUEST.value())
             .body("status_code", is(BAD_REQUEST.value()))
-            .body("message", is("[name=is required]"));
+            .body("message", is("Request body is invalid"));
     }
 
     @DisplayName("should return Bad Requet when field Description is invalid")
@@ -52,7 +52,7 @@ public class ProductCreateIntegrationTest extends IntegrationAbstractTest {
             .assertThat()
             .statusCode(BAD_REQUEST.value())
             .body("status_code", is(BAD_REQUEST.value()))
-            .body("message", is("[description=is required]"));
+            .body("message", is("Request body is invalid"));
     }
 
     @DisplayName("should return bad request when field price is less then zero or equals zero")
@@ -73,7 +73,7 @@ public class ProductCreateIntegrationTest extends IntegrationAbstractTest {
             .assertThat()
             .statusCode(BAD_REQUEST.value())
             .body("status_code", is(BAD_REQUEST.value()))
-            .body("message", is("[price=must be greater than zero]"));
+            .body("message", is("Request body is invalid"));
     }
 
     @DisplayName("should return bad request when field price is null")
@@ -92,7 +92,7 @@ public class ProductCreateIntegrationTest extends IntegrationAbstractTest {
             .assertThat()
             .statusCode(BAD_REQUEST.value())
             .body("status_code", is(BAD_REQUEST.value()))
-            .body("message", is("[price=is required]"));
+            .body("message", is("Request body is invalid"));
     }
 
     @DisplayName("should return bad request when request body is invalid miss field or miss brackets, are example")
